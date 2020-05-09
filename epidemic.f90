@@ -110,7 +110,7 @@ program epidemic
         ! Start spreading the virus
         do step=1,Nsim
             ! Deactivate superspreaders (if so desired)
-            if(step>Nstop) &
+            if(M>0 .AND. step>Nstop) &
                 population(N-M+1:N)%state=IMMUNE
             ! Go on spreading
             ncon=0.0d0
