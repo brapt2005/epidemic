@@ -8,19 +8,19 @@ Vasilios E. Raptis
 
     brapt@iacm.forth.gr  
   
-**Version**        :   1.0.0  
+**Version**        :   1.0.1  
 
-**Release date**   :   May 7th, 2020  
+**Release date**   :   May 9th, 2020  
 
 
 ## 1. Introduction
 This project contains all the software that was developed and employed  to carry 
 out the calculations reported in the article "COVID-19: An escape route from the 
-Symplegades of hygienic crisis and economic meltdown" to appear in some preprint 
-server soon. The project consists of a program in Fortran, implementing a simple 
-network model to predict contagion of an infective disease;  an auxiliary module 
-borrowed from my POLYANA project;  a shell script that launched the calculations 
-mentioned in the article; a sample input file; and the Makefile.  
+Symplegades of hygienic crisis and economic meltdown" uploaded to JMIR preprint.
+The project consists of a program in Fortran implementing a simple network model
+to predict contagion of an infective disease; an auxiliary module borrowed from 
+my POLYANA project;  a shell script  that launched the calculations mentioned in 
+the article; a sample input file; and the Makefile.  
 
 In the below paragraphs, a Linux environment (bash shell) is assumed. It should 
 be very easy to adapt the instructions to other environments.  
@@ -180,6 +180,14 @@ Please cite as follows:
 Vasilios Raptis, 
 Implementation of a simple network model for the study of epidemics, 
 https://github.com/brapt2005/epidemic (accessed on: ... insert date...)
+
+You may also cite the article as:  
+
+Raptis V  
+'COVID-19:  Escape routes from the Symplegades of hygienic crisis  and economic 
+meltdown', JMIR Preprints. 09/05/2020:20022  
+DOI: 10.2196/preprints.20022  
+URL: https://preprints.jmir.org/preprint/20022  
 
 ## 10. Legal stuff, etc.
 This program implements a simple model of social networks to look at infectious 
