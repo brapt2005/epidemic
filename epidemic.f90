@@ -24,7 +24,7 @@
 program epidemic
     use strings
     implicit none
-    integer, parameter :: dblpr=kind(1.0d0)
+    integer, parameter :: dblpr=kind(1.0d0),LARGE=1000
     integer, parameter :: INPUT=10,OUTPUT=11,STAT=12
     integer, parameter :: SQSUM=0,SUMSQ=1
     integer, parameter :: SUSCEPTIBLE=0,INFECTED=1,IMMUNE=2,CASES=3,REPRAT=4
@@ -41,11 +41,18 @@ program epidemic
     end type population_t
     integer i,individual,irun,j,M
     integer N,Nruns,Nsim,Nstop,Nt,n_connect,other,step
+    integer my_seed
     integer histogram(SUSCEPTIBLE:CASES)
     real c,cs,nh,r,sc,scs
     real(dblpr) x,ncon
     real(dblpr), allocatable :: statistics(:,:)
     type (population_t), allocatable :: population(:)
+    logical :: user_seed=.FALSE.
+    interface 
+        subroutine init_random_seed(s)   
+            integer, optional, intent(in) :: s
+        end subroutine init_random_seed
+    end interface
     ! Executable part starts here: 
     open(unit=INPUT,file='input')
     do while(get_record(input))
@@ -60,6 +67,12 @@ program epidemic
             read(record(postok(2,record):),*) M,sc,scs     ! number, contacts and sigma of superspr.
         if(strstr("simulation",record(1:i))>0) &           ! simul. details (steps, time one can transmit) 
             read(record(postok(2,record):),*) Nsim,Nt,Nstop! the virus, time to deactivate superspr.)
+        if(strstr("seed",record(1:i))>0) then
+            user_seed=.TRUE.
+            read(record(postok(2,record):),*) my_seed
+        endif
+        if(strstr("end",record(1:i))>0 .AND. strstr("input",record(1:i))>0) &
+            exit
     enddo
     close(unit=INPUT)
     ! Set up population 
@@ -96,10 +109,19 @@ program epidemic
         write(STAT,'("+-----------------------")',advance='no')
     enddo
     write(STAT,'("|")')
+    if(user_seed) &
+        CALL init_random_seed(my_seed)
     do irun=1,Nruns ! loop over simulation runs  
         write(OUTPUT,'(5I10)')0,histogram
         ! Infect someone: 
-        CALL init_random_seed
+        if(user_seed) then
+            do i=1,LARGE
+                my_seed=random_pick(N)
+            enddo
+            CALL init_random_seed(my_seed)
+        else
+            CALL init_random_seed
+        endif
         individual=random_pick(N)
         population(individual)%state=INFECTED
         population(individual)%time_of_infection=0
@@ -133,7 +155,8 @@ program epidemic
                         n_connect=nint(x)
                         ! that's it; let's infect some more fellow citizens
                         do j=1,n_connect
-                            other=random_pick(N)                            
+                            other=random_pick(N)  
+                            print*,other                          
                             if(other/=individual .AND. population(other)%state==SUSCEPTIBLE) then
                                 ncon=ncon+1.0d0
                                 population(other)%state=INFECTED
@@ -245,14 +268,20 @@ end program epidemic
 !   
 !---
 !   
-subroutine init_random_seed()   
+subroutine init_random_seed(my_seed)   
 ! Source: https://stackoverflow.com/questions/18754438/generating-random-numbers-in-a-fortran-module
+! (with the addition of optional argument by me - VR)  
 INTEGER :: i, n, clock       
 INTEGER, DIMENSION(:), ALLOCATABLE :: seed       
+integer, optional, intent(in) :: my_seed
 CALL RANDOM_SEED(size = n)       
 ALLOCATE(seed(n))       
-CALL SYSTEM_CLOCK(COUNT=clock)       
-seed = clock + 37 * (/ (i - 1, i = 1, n) /)       
+if(present(my_seed)) then
+    seed=my_seed + 37 * (/ (i - 1, i = 1, n) /)
+else
+    CALL SYSTEM_CLOCK(COUNT=clock)       
+    seed = clock + 37 * (/ (i - 1, i = 1, n) /)       
+endif
 CALL RANDOM_SEED(PUT = seed)       
 DEALLOCATE(seed) 
 end subroutine init_random_seed 
