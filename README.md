@@ -8,7 +8,7 @@ Vasilios E. Raptis
 
     brapt@iacm.forth.gr  
   
-**Version**        :   1.0.1  
+**Version**        :   1.0.2  
 
 **Release date**   :   May 9th, 2020  
 
@@ -77,6 +77,11 @@ The directives understood by the program, are summarised in the table below:
           *n1*        | Simulation steps
           *n2*        | Steps it takes for infected individual to gain immunity
           *n3*        | Steps from start of simulation, superspreaders are active
+        seed *n*      | Optional directive to provide a seed (an integer number *n*) 
+                      | for the random number generator so that results can be 
+                      | reproduced, if so desired.  
+        end input     | Optional directive so as to stop reading there and user can 
+                      | write any text below (including words used as directive keywords)
 
 ## 4. Output explained 
 
